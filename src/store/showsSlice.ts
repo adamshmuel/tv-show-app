@@ -110,10 +110,26 @@ export const searchShowsByName = createAsyncThunk<ShowSearchResult[], string, { 
     }
 )
 
+export const fetchShowById = createAsyncThunk<Show, string, { rejectValue: string }>(
+    "shows/fetchShowById",
+    async (id, { rejectWithValue }) => {
+        try {
+            const response = await axios.get<Show>(`${baseUrl}/${id}`);
+            return response.data;
+        } catch (error: unknown) {
+            if (axios.isAxiosError(error)) {
+                return rejectWithValue(String(error.response?.status ?? "Network Error"));
+            }
+            return rejectWithValue("Network Error");
+        }
+    }
+)
 
 interface InitialState {
     showsList: Show[],
-    showsFetchStatus: ShowsFetchStatus
+    showsFetchStatus: ShowsFetchStatus,
+    show: Show | null,
+    showFetchStatus: ShowFetchStatus
 }
 
 interface ShowsFetchStatus {
@@ -121,9 +137,18 @@ interface ShowsFetchStatus {
     errorMessage: string
 }
 
+interface ShowFetchStatus {
+    status: string,
+    errorMessage: string
+}
+
+
+
 const initialState: InitialState = {
     showsList: [],
-    showsFetchStatus: { status: '', errorMessage: '' }
+    showsFetchStatus: { status: '', errorMessage: '' },
+    show: null,
+    showFetchStatus: { status: '', errorMessage: '' }
 };
 
 const showSlice = createSlice({
@@ -149,12 +174,24 @@ const showSlice = createSlice({
             state.showsFetchStatus.status = 'succeeded';
         })
         builder.addCase(searchShowsByName.pending, (state) => {
-            state.showsFetchStatus.status = 'searching';
+            state.showsFetchStatus.status = 'loading';
             state.showsList = [];
         })
         builder.addCase(searchShowsByName.rejected, (state, action) => {
             state.showsFetchStatus.status = 'failed';
             state.showsFetchStatus.errorMessage = action.payload ?? "Something went wrong";
+        })
+        builder.addCase(fetchShowById.fulfilled, (state, action) => {
+            state.show = action.payload;
+            state.showFetchStatus.status = 'succeeded';
+        })
+        builder.addCase(fetchShowById.pending, (state) => {
+            state.showFetchStatus.status = 'loading';
+            state.show = null;
+        })
+        builder.addCase(fetchShowById.rejected, (state, action) => {
+            state.showFetchStatus.status = 'failed';
+            state.showFetchStatus.errorMessage = action.payload ?? "Something went wrong";
         })
     }
 })

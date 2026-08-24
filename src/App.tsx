@@ -6,13 +6,14 @@ import AboutPage from './components/AboutPage'
 import Favorites from './components/Favorites'
 import { Provider } from 'react-redux'
 import { store } from './store/store'
+import PageNotFound from './components/PageNotFound'
 
 function App() {
 
 
   return (
     <div>
-      <h1>APP</h1>
+      <h1>Tv Shows App</h1>
       <br />
       <Provider store={store}>
         <NavBar />
@@ -21,6 +22,7 @@ function App() {
           <Route path="/shows/:id" element={<ShowDetailPage />} />
           <Route path="/about" element={<AboutPage />} />
           <Route path="/favorites" element={<Favorites />} />
+          <Route path='*' element={<PageNotFound />} />
         </Routes>
       </Provider>
     </div>
