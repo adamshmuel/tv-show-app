@@ -37,17 +37,17 @@ export default function ShowListPage() {
   return (
     <div>ShowListPage
       <br />
-      <input type="text" placeholder='Search shows by name...' value={searchPhrase} onChange={e => handleSearch(e.target.value)} />
-      <ul style={{ textAlign: 'left' }}>
+      <input style={{ marginBottom: '24px' }} type="text" placeholder='Search shows by name...' value={searchPhrase} onChange={e => handleSearch(e.target.value)} />
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, minmax(0, 1fr))', gap: '24px'  }}>
         {shows.map((show) => {
-          return <li key={show.id}>
+          return <div key={show.id}>
             {<img src={show.image?.medium} />} <br />
             {show.rating.average} <br />
             {show.genres} <br />
             {show.name} <br />
-          </li>
+          </div>
         })}
-      </ul>
+      </div>
     </div>
   )
 }

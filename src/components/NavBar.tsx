@@ -4,11 +4,9 @@ import { Link } from 'react-router-dom'
 export default function NavBar() {
   return (
     <div>NavBar
-      <nav>
+      <nav style={{ display: 'flex', gap: '28px' }}>
         <Link to="/">Home</Link>
-        <br />
         <Link to="/about">About</Link>
-        <br />
         <Link to="/favorites">Favorites</Link>
       </nav>
     </div>

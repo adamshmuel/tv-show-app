@@ -132,7 +132,7 @@ const showSlice = createSlice({
     reducers: {},
     extraReducers: (builder) => {
         builder.addCase(fetchShows.fulfilled, (state, action) => {
-            state.showsList = action.payload.slice(0, 8);
+            state.showsList = action.payload.slice(0, 12);
             state.showsFetchStatus.status = 'succeeded';
         })
         builder.addCase(fetchShows.pending, (state) => {
@@ -145,7 +145,7 @@ const showSlice = createSlice({
             state.showsFetchStatus.errorMessage = action.payload ?? "Something went wrong";
         })
         builder.addCase(searchShowsByName.fulfilled, (state, action) => {
-            state.showsList = action.payload.map(r => r.show).slice(0, 8);
+            state.showsList = action.payload.map(r => r.show).slice(0, 12);
             state.showsFetchStatus.status = 'succeeded';
         })
         builder.addCase(searchShowsByName.pending, (state) => {
