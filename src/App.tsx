@@ -4,6 +4,8 @@ import ShowListPage from './components/ShowListPage'
 import ShowDetailPage from './components/ShowDetailPage'
 import AboutPage from './components/AboutPage'
 import Favorites from './components/Favorites'
+import { Provider } from 'react-redux'
+import { store } from './store/store'
 
 function App() {
 
@@ -12,14 +14,15 @@ function App() {
     <div>
       <h1>APP</h1>
       <br />
-      <NavBar/>
-      <Routes>
-        <Route path="/" element={<ShowListPage/>} />
-        <Route path="/shows/:id" element={<ShowDetailPage />} />
-        <Route path="/about" element={<AboutPage />} />
-        <Route path="/favorites" element={<Favorites />} />
-      </Routes>
-    
+      <Provider store={store}>
+        <NavBar />
+        <Routes>
+          <Route path="/" element={<ShowListPage />} />
+          <Route path="/shows/:id" element={<ShowDetailPage />} />
+          <Route path="/about" element={<AboutPage />} />
+          <Route path="/favorites" element={<Favorites />} />
+        </Routes>
+      </Provider>
     </div>
   )
 }

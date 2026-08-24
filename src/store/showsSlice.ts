@@ -114,7 +114,7 @@ const showSlice = createSlice({
             state.showsList = action.payload.slice(0, 8);
             state.showsFetchStatus.status = 'succeeded';
         })
-        builder.addCase(fetchShows.pending, (state, action) => {
+        builder.addCase(fetchShows.pending, (state) => {
             state.showsFetchStatus.status = 'loading';
             state.showsList = [];
         })
@@ -124,5 +124,7 @@ const showSlice = createSlice({
         })
     }
 })
+
+export default showSlice.reducer;
 
 
