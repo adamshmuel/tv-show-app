@@ -73,12 +73,33 @@ interface Show {
     _links: ShowLinks;
 }
 
+interface ShowSearchResult {
+    score: number;
+    show: Show;
+}
+
+const baseUrl: string = "https://api.tvmaze.com/shows";
+const searchUrl: string = "https://api.tvmaze.com/search/shows"
 
 export const fetchShows = createAsyncThunk<Show[], void, { rejectValue: string }>(
     "shows/fetchShows",
     async (_, { rejectWithValue }) => {
         try {
-            const response = await axios.get<Show[]>("https://api.tvmaze.com/shows");
+            const response = await axios.get<Show[]>(baseUrl);
+            return response.data;
+        } catch (error: unknown) {
+            if (axios.isAxiosError(error)) {
+                return rejectWithValue(String(error.response?.status ?? "Network Error"));
+            }
+            return rejectWithValue("Network Error");
+        }
+    }
+)
+export const searchShowsByName = createAsyncThunk<ShowSearchResult[], string, { rejectValue: string }>(
+    "shows/searchShowsByName",
+    async (name, { rejectWithValue }) => {
+        try {
+            const response = await axios.get<ShowSearchResult[]>(searchUrl, {params: {q: name}});
             return response.data;
         } catch (error: unknown) {
             if (axios.isAxiosError(error)) {
@@ -117,8 +138,21 @@ const showSlice = createSlice({
         builder.addCase(fetchShows.pending, (state) => {
             state.showsFetchStatus.status = 'loading';
             state.showsList = [];
+            
         })
         builder.addCase(fetchShows.rejected, (state, action) => {
+            state.showsFetchStatus.status = 'failed';
+            state.showsFetchStatus.errorMessage = action.payload ?? "Something went wrong";
+        })
+        builder.addCase(searchShowsByName.fulfilled, (state, action) => {
+            state.showsList = action.payload.map(r => r.show).slice(0, 8);
+            state.showsFetchStatus.status = 'succeeded';
+        })
+        builder.addCase(searchShowsByName.pending, (state) => {
+            state.showsFetchStatus.status = 'searching';
+            state.showsList = [];
+        })
+        builder.addCase(searchShowsByName.rejected, (state, action) => {
             state.showsFetchStatus.status = 'failed';
             state.showsFetchStatus.errorMessage = action.payload ?? "Something went wrong";
         })
