@@ -57,9 +57,3 @@ so far, in one coherent app:
   every add/remove, and reloaded into Redux state on mount so they
   survive a page refresh.
 
-## Setup
-
-```bash
-npm install
-npm run dev
-```
