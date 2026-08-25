@@ -3,6 +3,7 @@ import { useSelector, useDispatch } from "react-redux"
 import { fetchShowById } from '../store/showsSlice';
 import { Link, useParams } from 'react-router-dom';
 import type { RootState, AppDispatch } from "../store/store"
+import FavoriteButton from './FavoriteButton';
 
 
 export default function ShowDetailPage() {
@@ -39,7 +40,8 @@ export default function ShowDetailPage() {
       premiered: {show.premiered} <br />
       ended: {show.ended} <br />
       name: {show.name}  <br />
-      <a href={show.officialSite ?? undefined} target="_blank" rel="noopener noreferrer">Official Site</a>
+      <a href={show.officialSite ?? undefined} target="_blank" rel="noopener noreferrer">Official Site</a><br />
+      <FavoriteButton show={show}></FavoriteButton>
       <br />
       <Link to="/">Back</Link>
     </div>

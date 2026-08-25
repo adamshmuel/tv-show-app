@@ -1,15 +1,15 @@
 import { useEffect, useState } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import type { RootState, AppDispatch } from "../store/store"
-import { fetchShows, searchShowsByName, addFavorite, type Show , removeFavorite} from '../store/showsSlice';
+import { fetchShows, searchShowsByName} from '../store/showsSlice';
 import { Link } from 'react-router-dom'
+import FavoriteButton from './FavoriteButton';
 
 export default function ShowListPage() {
 
   const [searchPhrase, setSearchPhrase] = useState('');
   const shows = useSelector((state: RootState) => state.shows.showsList);
   const status = useSelector((state: RootState) => state.shows.showsFetchStatus.status)
-  const favorites = useSelector((state: RootState) => state.shows.favorites);
   const dispatch = useDispatch<AppDispatch>();
 
 
@@ -36,14 +36,6 @@ export default function ShowListPage() {
 
   }
 
-  const handleAddToFavorites = (show: Show) => {
-    dispatch(addFavorite(show));
-  }
-
-  const handleRemoveFromFavorites = (show: Show) => {
-    dispatch(removeFavorite(show));
-  }
-  
 
   return (
     <div>
@@ -55,10 +47,7 @@ export default function ShowListPage() {
             {show.rating.average} <br />
             {show.genres} <br />
             <Link to={`/shows/${show.id}`}>{show.name} <br /></Link>
-            {favorites.find(favorite => favorite.id === show.id) ?
-              <button onClick={() => handleRemoveFromFavorites(show)}>Remove from Favorites</button> :
-              <button onClick={() => handleAddToFavorites(show)}>Add to Favorites</button>
-            }
+            <FavoriteButton show={show}></FavoriteButton>
           </div>
         })}
       </div>
