@@ -47,7 +47,7 @@ interface ShowLinks {
     nextepisode?: LinkRef;
 }
 
-interface Show {
+export interface Show {
     id: number;
     url: string;
     name: string;
@@ -210,7 +210,7 @@ const showSlice = createSlice({
         })
     }
 })
-
+export const {addFavorite, removeFavorite, loadFavorites} = showSlice.actions;
 export default showSlice.reducer;
 
 
