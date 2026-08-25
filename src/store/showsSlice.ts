@@ -1,4 +1,4 @@
-import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
+import { createAsyncThunk, createSlice, type PayloadAction } from '@reduxjs/toolkit'
 import axios from "axios";
 
 interface Country {
@@ -99,7 +99,7 @@ export const searchShowsByName = createAsyncThunk<ShowSearchResult[], string, { 
     "shows/searchShowsByName",
     async (name, { rejectWithValue }) => {
         try {
-            const response = await axios.get<ShowSearchResult[]>(searchUrl, {params: {q: name}});
+            const response = await axios.get<ShowSearchResult[]>(searchUrl, { params: { q: name } });
             return response.data;
         } catch (error: unknown) {
             if (axios.isAxiosError(error)) {
@@ -129,7 +129,8 @@ interface InitialState {
     showsList: Show[],
     showsFetchStatus: ShowsFetchStatus,
     show: Show | null,
-    showFetchStatus: ShowFetchStatus
+    showFetchStatus: ShowFetchStatus,
+    favorites: Show[]
 }
 
 interface ShowsFetchStatus {
@@ -148,13 +149,27 @@ const initialState: InitialState = {
     showsList: [],
     showsFetchStatus: { status: '', errorMessage: '' },
     show: null,
-    showFetchStatus: { status: '', errorMessage: '' }
+    showFetchStatus: { status: '', errorMessage: '' },
+    favorites: []
 };
 
 const showSlice = createSlice({
     name: 'shows',
     initialState,
-    reducers: {},
+    reducers: {
+        addFavorite: (state, action: PayloadAction<Show>) => {
+            state.favorites.push(action.payload);
+            localStorage.setItem('favorites', JSON.stringify(state.favorites));
+        },
+        removeFavorite: (state, action: PayloadAction<Show>) => {
+            state.favorites = state.favorites.filter(item => item.id !== action.payload.id);
+            localStorage.setItem('favorites', JSON.stringify(state.favorites));
+        },
+        loadFavorites: (state) => {
+            const saved = localStorage.getItem('favorites');
+            state.favorites = saved ? JSON.parse(saved) : [];
+        }
+    },
     extraReducers: (builder) => {
         builder.addCase(fetchShows.fulfilled, (state, action) => {
             state.showsList = action.payload.slice(0, 12);
@@ -163,7 +178,7 @@ const showSlice = createSlice({
         builder.addCase(fetchShows.pending, (state) => {
             state.showsFetchStatus.status = 'loading';
             state.showsList = [];
-            
+
         })
         builder.addCase(fetchShows.rejected, (state, action) => {
             state.showsFetchStatus.status = 'failed';
