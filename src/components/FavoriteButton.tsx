@@ -2,6 +2,9 @@ import { useSelector, useDispatch } from 'react-redux'
 import type { RootState, AppDispatch } from "../store/store"
 import { addFavorite, removeFavorite, type Show } from '../store/showsSlice'
 
+// Shared by ShowListPage, ShowDetailPage, and Favorites so the add/remove
+// toggle logic only has to live in one place instead of being duplicated
+// in every page that shows a favorite-able show.
 export default function FavoriteButton({ show }: { show: Show }) {
   const favorites = useSelector((state: RootState) => state.shows.favorites);
   const dispatch = useDispatch<AppDispatch>();

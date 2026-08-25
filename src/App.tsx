@@ -15,13 +15,16 @@ function App() {
     <div>
       <h1>Tv Shows App</h1>
       <br />
+      {/* Provider makes the Redux store available to every page via useSelector/useDispatch */}
       <Provider store={store}>
         <NavBar />
         <Routes>
           <Route path="/" element={<ShowListPage />} />
+          {/* :id is a route param — ShowDetailPage reads it with useParams() to fetch that one show */}
           <Route path="/shows/:id" element={<ShowDetailPage />} />
           <Route path="/about" element={<AboutPage />} />
           <Route path="/favorites" element={<Favorites />} />
+          {/* Catches any path that didn't match a route above (must stay last) */}
           <Route path='*' element={<PageNotFound />} />
         </Routes>
       </Provider>

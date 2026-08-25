@@ -12,11 +12,14 @@ export default function ShowListPage() {
   const status = useSelector((state: RootState) => state.shows.showsFetchStatus.status)
   const dispatch = useDispatch<AppDispatch>();
 
+  // Rehydrate favorites from localStorage so FavoriteButton knows what's
+  // already favorited, even right after a page refresh.
   useEffect(() => {
     dispatch(loadFavorites());
   }, []);
 
 
+  // Empty deps array — only fetch the default list once, on mount
   useEffect(() => {
     dispatch(fetchShows());
   }, [])
@@ -25,6 +28,8 @@ export default function ShowListPage() {
     if (name) {
       dispatch(searchShowsByName(name));
     } else {
+      // Clearing the search box restores the default list instead of
+      // searching for an empty string (which would hit the API pointlessly)
       dispatch(fetchShows());
     }
 
@@ -36,6 +41,9 @@ export default function ShowListPage() {
   return (
     <div>
       <input style={{ marginBottom: '24px', width: '420px', height: '30px', padding: '10px 14px', fontSize: '16px' }} type="text" placeholder='Search shows by name...' value={searchPhrase} onChange={e => handleSearch(e.target.value)} />
+      {/* Loading/error/grid are rendered conditionally rather than as early
+          returns, so the <input> above stays mounted and never loses focus
+          while typing a search (each keystroke briefly sets status:'loading') */}
       {status === "loading" && <p>Loading....</p>}
       {status === "failed" && <p>Error can not fetch show</p>}
       {status !== "loading" && status !== "failed" && (

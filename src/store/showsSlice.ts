@@ -73,6 +73,8 @@ export interface Show {
     _links: ShowLinks;
 }
 
+// TVMaze's search endpoint doesn't return Show[] directly — each result is
+// wrapped with a relevance score, so the thunk below has to unwrap .show.
 interface ShowSearchResult {
     score: number;
     show: Show;
@@ -81,6 +83,9 @@ interface ShowSearchResult {
 const baseUrl: string = "https://api.tvmaze.com/shows";
 const searchUrl: string = "https://api.tvmaze.com/search/shows"
 
+// createAsyncThunk<ReturnType, ArgType, ThunkApiConfig> — ReturnType is what
+// .fulfilled's action.payload will be typed as; ArgType is what you pass when
+// dispatching (fetchShows() takes none, hence void).
 export const fetchShows = createAsyncThunk<Show[], void, { rejectValue: string }>(
     "shows/fetchShows",
     async (_, { rejectWithValue }) => {
@@ -89,6 +94,7 @@ export const fetchShows = createAsyncThunk<Show[], void, { rejectValue: string }
             return response.data;
         } catch (error: unknown) {
             if (axios.isAxiosError(error)) {
+                // Prefer the HTTP status if axios gives us one, otherwise a generic message
                 return rejectWithValue(String(error.response?.status ?? "Network Error"));
             }
             return rejectWithValue("Network Error");
@@ -156,6 +162,8 @@ const initialState: InitialState = {
 const showSlice = createSlice({
     name: 'shows',
     initialState,
+    // Plain synchronous reducers — favorites don't need a thunk since there's
+    // no network request, just Redux state kept in sync with localStorage.
     reducers: {
         addFavorite: (state, action: PayloadAction<Show>) => {
             state.favorites.push(action.payload);
@@ -165,13 +173,20 @@ const showSlice = createSlice({
             state.favorites = state.favorites.filter(item => item.id !== action.payload.id);
             localStorage.setItem('favorites', JSON.stringify(state.favorites));
         },
+        // Rehydrates favorites from localStorage into Redux state — dispatched
+        // on mount by pages that need it, since state resets to [] on every
+        // page refresh but localStorage doesn't.
         loadFavorites: (state) => {
             const saved = localStorage.getItem('favorites');
             state.favorites = saved ? JSON.parse(saved) : [];
         }
     },
+    // extraReducers handles actions from createAsyncThunk above (pending/
+    // fulfilled/rejected), as opposed to the synchronous ones in `reducers`.
     extraReducers: (builder) => {
         builder.addCase(fetchShows.fulfilled, (state, action) => {
+            // TVMaze's /shows has no paging, so it returns the whole catalog —
+            // slice to keep the grid a reasonable size.
             state.showsList = action.payload.slice(0, 12);
             state.showsFetchStatus.status = 'succeeded';
         })
@@ -185,6 +200,7 @@ const showSlice = createSlice({
             state.showsFetchStatus.errorMessage = action.payload ?? "Something went wrong";
         })
         builder.addCase(searchShowsByName.fulfilled, (state, action) => {
+            // Unwrap the {score, show} wrapper (see ShowSearchResult above) before storing
             state.showsList = action.payload.map(r => r.show).slice(0, 12);
             state.showsFetchStatus.status = 'succeeded';
         })
@@ -202,6 +218,8 @@ const showSlice = createSlice({
         })
         builder.addCase(fetchShowById.pending, (state) => {
             state.showFetchStatus.status = 'loading';
+            // Clear the previous show so a slow-loading new page doesn't
+            // briefly flash the last show's data before this one arrives.
             state.show = null;
         })
         builder.addCase(fetchShowById.rejected, (state, action) => {

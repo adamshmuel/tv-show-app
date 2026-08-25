@@ -9,6 +9,7 @@ import FavoriteButton from './FavoriteButton';
 export default function ShowDetailPage() {
 
 
+  // id comes from the /shows/:id route segment
   const { id } = useParams();
   const dispatch = useDispatch<AppDispatch>();
   const show = useSelector((state: RootState) => state.shows.show);
@@ -17,6 +18,8 @@ export default function ShowDetailPage() {
   useEffect(() => {
     if (!id) return;
     dispatch(fetchShowById(id));
+    // Depends on id so navigating from one show's page directly to another
+    // (id changes but the component stays mounted) re-fetches the new show.
   }, [id])
 
   if (status === "loading") {
@@ -28,6 +31,8 @@ export default function ShowDetailPage() {
   }
 
   if (!show) {
+    // Covers the brief initial render before the fetch's pending/fulfilled
+    // status has landed, and a genuinely missing/invalid id.
     return <p>No show found</p>
   }
 

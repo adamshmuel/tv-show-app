@@ -4,6 +4,7 @@ import './index.css'
 import App from './App.tsx'
 import { BrowserRouter } from 'react-router-dom'
 
+// BrowserRouter enables React Router's <Routes>/<Link>/useParams() throughout App
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <BrowserRouter>

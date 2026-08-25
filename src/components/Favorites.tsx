@@ -10,6 +10,9 @@ export default function Favorites() {
   const favorites = useSelector((state: RootState) => state.shows.favorites);
   const dispatch = useDispatch<AppDispatch>();
 
+  // Loads favorites from localStorage on mount — needed here too (not just
+  // ShowListPage) in case a user lands directly on /favorites, e.g. via a
+  // refresh or bookmark, without ShowListPage ever having mounted first.
   useEffect(() => {
     dispatch(loadFavorites());
   }, []);

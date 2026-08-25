@@ -8,5 +8,7 @@ export const store = configureStore({
     }
 })
 
+// Derived from the store itself so these types always match its real shape —
+// used to type useSelector/useDispatch in components instead of the untyped defaults.
 export type RootState = ReturnType<typeof store.getState>
 export type AppDispatch = typeof store.dispatch
