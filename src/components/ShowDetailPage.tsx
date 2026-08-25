@@ -43,7 +43,7 @@ export default function ShowDetailPage() {
       <a href={show.officialSite ?? undefined} target="_blank" rel="noopener noreferrer">Official Site</a><br />
       <FavoriteButton show={show}></FavoriteButton>
       <br />
-      <Link to="/">Back</Link>
+      <Link to="/">Back to home page</Link>
     </div>
   )
 }

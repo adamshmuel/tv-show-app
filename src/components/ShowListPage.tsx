@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import type { RootState, AppDispatch } from "../store/store"
-import { fetchShows, searchShowsByName} from '../store/showsSlice';
+import { fetchShows, searchShowsByName, loadFavorites } from '../store/showsSlice';
 import { Link } from 'react-router-dom'
 import FavoriteButton from './FavoriteButton';
 
@@ -12,18 +12,14 @@ export default function ShowListPage() {
   const status = useSelector((state: RootState) => state.shows.showsFetchStatus.status)
   const dispatch = useDispatch<AppDispatch>();
 
+  useEffect(() => {
+    dispatch(loadFavorites());
+  }, []);
+
 
   useEffect(() => {
     dispatch(fetchShows());
   }, [])
-
-  if (status === "loading") {
-    return <p>Loading....</p>;
-  }
-
-  if (status === "failed") {
-    return <p>Error can not fetch post <button>Retry</button></p>;
-  }
 
   const handleSearch = (name: string) => {
     if (name) {
@@ -40,17 +36,21 @@ export default function ShowListPage() {
   return (
     <div>
       <input style={{ marginBottom: '24px', width: '420px', height: '30px', padding: '10px 14px', fontSize: '16px' }} type="text" placeholder='Search shows by name...' value={searchPhrase} onChange={e => handleSearch(e.target.value)} />
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, minmax(0, 1fr))', gap: '24px' }}>
-        {shows.map((show) => {
-          return <div key={show.id}>
-            <Link to={`/shows/${show.id}`}><img src={show.image?.medium} /></Link><br />
-            {show.rating.average} <br />
-            {show.genres} <br />
-            <Link to={`/shows/${show.id}`}>{show.name} <br /></Link>
-            <FavoriteButton show={show}></FavoriteButton>
-          </div>
-        })}
-      </div>
+      {status === "loading" && <p>Loading....</p>}
+      {status === "failed" && <p>Error can not fetch show</p>}
+      {status !== "loading" && status !== "failed" && (
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, minmax(0, 1fr))', gap: '24px' }}>
+          {shows.map((show) => {
+            return <div key={show.id}>
+              <Link to={`/shows/${show.id}`}><img src={show.image?.medium} /></Link><br />
+              {show.rating.average} <br />
+              {show.genres} <br />
+              <Link to={`/shows/${show.id}`}>{show.name} <br /></Link>
+              <FavoriteButton show={show}></FavoriteButton>
+            </div>
+          })}
+        </div>
+      )}
     </div>
   )
 }
