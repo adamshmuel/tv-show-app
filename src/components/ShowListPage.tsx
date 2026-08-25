@@ -84,12 +84,14 @@ export default function ShowListPage() {
                     <span className="pill" key={genre}>{genre}</span>
                   ))}
                 </div>
-                {show.rating.average != null && (
-                  <div className="rating-badge">
-                    <StarIcon />
-                    {show.rating.average}
-                  </div>
-                )}
+                <div className="card-rating-slot">
+                  {show.rating.average != null && (
+                    <div className="rating-badge">
+                      <StarIcon />
+                      {show.rating.average}
+                    </div>
+                  )}
+                </div>
                 <FavoriteButton show={show}></FavoriteButton>
               </div>
             </div>

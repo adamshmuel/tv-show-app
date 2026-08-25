@@ -42,12 +42,14 @@ export default function Favorites() {
                 <span className="pill" key={genre}>{genre}</span>
               ))}
             </div>
-            {favorite.rating.average != null && (
-              <div className="rating-badge">
-                <StarIcon />
-                {favorite.rating.average}
-              </div>
-            )}
+            <div className="card-rating-slot">
+              {favorite.rating.average != null && (
+                <div className="rating-badge">
+                  <StarIcon />
+                  {favorite.rating.average}
+                </div>
+              )}
+            </div>
             <FavoriteButton show={favorite}></FavoriteButton>
           </div>
         </div>

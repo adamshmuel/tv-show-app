@@ -117,6 +117,7 @@ button {
   overflow: hidden;
   display: flex;
   flex-direction: column;
+  height: 100%;
 }
 
 .card-poster {
@@ -140,6 +141,7 @@ button {
   display: flex;
   flex-direction: column;
   gap: 8px;
+  flex: 1;
 }
 
 .card-title {
@@ -152,6 +154,19 @@ button {
   display: flex;
   gap: 6px;
   flex-wrap: wrap;
+  min-height: 22px;
+}
+
+.card-rating-slot {
+  min-height: 22px;
+  margin-top: auto;
+}
+
+/* Pushes to the bottom of .card-body regardless of how much content
+   (pills, rating) sits above it, so the button lines up across a row
+   of cards even when some shows are missing genres/rating data. */
+.card-body > .btn-secondary {
+  margin-top: auto;
 }
 
 /* Loading spinner */
