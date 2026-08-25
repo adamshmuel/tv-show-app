@@ -185,8 +185,9 @@ const showSlice = createSlice({
     // fulfilled/rejected), as opposed to the synchronous ones in `reducers`.
     extraReducers: (builder) => {
         builder.addCase(fetchShows.fulfilled, (state, action) => {
-            // TVMaze's /shows has no paging, so it returns the whole catalog —
-            // slice to keep the grid a reasonable size.
+            // TVMaze's /shows has no paging, so it returns the whole catalog
+            // sorted by ascending id — slice(-48) takes the last 48 (the
+            // most recently added shows) instead of the first 48.
             state.showsList = action.payload.slice(-48);
             state.showsFetchStatus.status = 'succeeded';
         })
