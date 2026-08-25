@@ -11,6 +11,6 @@ export default function FavoriteButton({ show }: { show: Show }) {
   const isFavorite = favorites.some(favorite => favorite.id === show.id);
 
   return isFavorite
-    ? <button onClick={() => dispatch(removeFavorite(show))}>Remove from Favorites</button>
-    : <button onClick={() => dispatch(addFavorite(show))}>Add to Favorites</button>;
+    ? <button className="btn-secondary is-favorite" onClick={() => dispatch(removeFavorite(show))}>Remove from Favorites</button>
+    : <button className="btn-secondary" onClick={() => dispatch(addFavorite(show))}>Add to Favorites</button>;
 }

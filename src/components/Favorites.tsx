@@ -4,6 +4,7 @@ import type { RootState, AppDispatch } from "../store/store"
 import { Link } from 'react-router-dom'
 import FavoriteButton from './FavoriteButton';
 import { loadFavorites } from '../store/showsSlice';
+import { StarIcon } from './icons';
 
 export default function Favorites() {
 
@@ -17,15 +18,38 @@ export default function Favorites() {
     dispatch(loadFavorites());
   }, []);
 
+  if (favorites.length === 0) {
+    return (
+      <div className="info-page">
+        <p className="state-heading">No favorites yet</p>
+        <p className="state-body">Shows you favorite will show up here.</p>
+        <Link to="/">Browse shows</Link>
+      </div>
+    )
+  }
+
   return (
-    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, minmax(0, 1fr))', gap: '24px' }} >
+    <div className="show-grid">
       {favorites.map((favorite) => {
-        return <div key={favorite.id}>
-          <Link to={`/shows/${favorite.id}`}><img src={favorite.image?.medium} /></Link><br />
-          {favorite.rating.average} <br />
-          {favorite.genres} <br />
-          <Link to={`/shows/${favorite.id}`}>{favorite.name} <br /></Link>
-          <FavoriteButton show={favorite}></FavoriteButton>
+        return <div className="card" key={favorite.id}>
+          <Link to={`/shows/${favorite.id}`} className="card-poster">
+            <img src={favorite.image?.original} alt={favorite.name} />
+          </Link>
+          <div className="card-body">
+            <Link to={`/shows/${favorite.id}`} className="card-title">{favorite.name}</Link>
+            <div className="card-pills">
+              {favorite.genres.map((genre) => (
+                <span className="pill" key={genre}>{genre}</span>
+              ))}
+            </div>
+            {favorite.rating.average != null && (
+              <div className="rating-badge">
+                <StarIcon />
+                {favorite.rating.average}
+              </div>
+            )}
+            <FavoriteButton show={favorite}></FavoriteButton>
+          </div>
         </div>
       })}
     </div>

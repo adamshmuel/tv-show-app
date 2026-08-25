@@ -13,8 +13,6 @@ function App() {
 
   return (
     <div>
-      <h1>Tv Shows App</h1>
-      <br />
       {/* Provider makes the Redux store available to every page via useSelector/useDispatch */}
       <Provider store={store}>
         <NavBar />

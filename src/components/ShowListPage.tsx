@@ -4,6 +4,7 @@ import type { RootState, AppDispatch } from "../store/store"
 import { fetchShows, searchShowsByName, loadFavorites } from '../store/showsSlice';
 import { Link } from 'react-router-dom'
 import FavoriteButton from './FavoriteButton';
+import { SearchIcon, StarIcon, AlertCircleIcon } from './icons';
 
 export default function ShowListPage() {
 
@@ -40,21 +41,57 @@ export default function ShowListPage() {
 
   return (
     <div>
-      <input style={{ marginBottom: '24px', width: '420px', height: '30px', padding: '10px 14px', fontSize: '16px' }} type="text" placeholder='Search shows by name...' value={searchPhrase} onChange={e => handleSearch(e.target.value)} />
+      <div className="search-row">
+        <div className="search-wrap">
+          <span className="search-icon"><SearchIcon /></span>
+          <input
+            className="search-input"
+            type="text"
+            placeholder="Search shows by name…"
+            value={searchPhrase}
+            onChange={e => handleSearch(e.target.value)}
+          />
+        </div>
+      </div>
       {/* Loading/error/grid are rendered conditionally rather than as early
           returns, so the <input> above stays mounted and never loses focus
           while typing a search (each keystroke briefly sets status:'loading') */}
-      {status === "loading" && <p>Loading....</p>}
-      {status === "failed" && <p>Error can not fetch show</p>}
+      {status === "loading" && (
+        <div className="state-region">
+          <div className="spinner"></div>
+          <p className="state-loading-text">Loading shows…</p>
+        </div>
+      )}
+      {status === "failed" && (
+        <div className="state-region state-error">
+          <div className="state-icon-circle"><AlertCircleIcon /></div>
+          <p className="state-heading">Couldn't load shows</p>
+          <p className="state-body">Please check your connection and try again.</p>
+          <button className="btn-primary" style={{ marginTop: '8px' }}>Retry</button>
+        </div>
+      )}
       {status !== "loading" && status !== "failed" && (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, minmax(0, 1fr))', gap: '24px' }}>
+        <div className="show-grid">
           {shows.map((show) => {
-            return <div key={show.id}>
-              <Link to={`/shows/${show.id}`}><img src={show.image?.medium} /></Link><br />
-              {show.rating.average} <br />
-              {show.genres} <br />
-              <Link to={`/shows/${show.id}`}>{show.name} <br /></Link>
-              <FavoriteButton show={show}></FavoriteButton>
+            return <div className="card" key={show.id}>
+              <Link to={`/shows/${show.id}`} className="card-poster">
+                <img src={show.image?.original} alt={show.name} />
+              </Link>
+              <div className="card-body">
+                <Link to={`/shows/${show.id}`} className="card-title">{show.name}</Link>
+                <div className="card-pills">
+                  {show.genres.map((genre) => (
+                    <span className="pill" key={genre}>{genre}</span>
+                  ))}
+                </div>
+                {show.rating.average != null && (
+                  <div className="rating-badge">
+                    <StarIcon />
+                    {show.rating.average}
+                  </div>
+                )}
+                <FavoriteButton show={show}></FavoriteButton>
+              </div>
             </div>
           })}
         </div>
