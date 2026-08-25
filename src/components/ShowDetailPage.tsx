@@ -33,9 +33,14 @@ export default function ShowDetailPage() {
   return (
     <div>
       <img src={show.image?.medium} />  <br />
-      {show.rating.average} <br />
-      {show.genres} <br />
-      {show.name}  <br />
+      rating: {show.rating.average} <br />
+      genres: {show.genres} <br />
+      runtime: {show.runtime} <br />
+      premiered: {show.premiered} <br />
+      ended: {show.ended} <br />
+      name: {show.name}  <br />
+      <a href={show.officialSite ?? undefined} target="_blank" rel="noopener noreferrer">Official Site</a>
+      <br />
       <Link to="/">Back</Link>
     </div>
   )
