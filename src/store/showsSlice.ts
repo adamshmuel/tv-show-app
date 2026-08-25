@@ -187,7 +187,7 @@ const showSlice = createSlice({
         builder.addCase(fetchShows.fulfilled, (state, action) => {
             // TVMaze's /shows has no paging, so it returns the whole catalog —
             // slice to keep the grid a reasonable size.
-            state.showsList = action.payload.slice(0, 12);
+            state.showsList = action.payload.slice(-48);
             state.showsFetchStatus.status = 'succeeded';
         })
         builder.addCase(fetchShows.pending, (state) => {
@@ -201,7 +201,7 @@ const showSlice = createSlice({
         })
         builder.addCase(searchShowsByName.fulfilled, (state, action) => {
             // Unwrap the {score, show} wrapper (see ShowSearchResult above) before storing
-            state.showsList = action.payload.map(r => r.show).slice(0, 12);
+            state.showsList = action.payload.map(r => r.show).slice(-48);
             state.showsFetchStatus.status = 'succeeded';
         })
         builder.addCase(searchShowsByName.pending, (state) => {
